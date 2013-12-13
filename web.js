@@ -25,7 +25,7 @@ app.get('/', function(request, response) {
 });
 
 app.get('/initial-handler', function(request, response) {
-	var digits = request.query.digits;
+	var digits = request.query.Digits;
 	
 	var twilioResponse = new twilio.TwimlResponse();
 
