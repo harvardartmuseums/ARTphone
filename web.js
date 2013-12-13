@@ -4,25 +4,46 @@ var express = require("express"),
 
 var app = express();
 
-var twilioResponse = new twilio.TwimlResponse();
-
 app.get('/', function(request, response) {
-	twilioResponse.say("Welcome to HAM phone.");
+	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1", {timeout:10000})
-		.on("timeout", function(ms) {
-			response.setHeader("Content-Type", "text/xml");
-			response.end(twilioResponse.toString());
-
-		})		
-		.on("complete", function(result) {
-			twilioResponse.say(result.records[0].title);
-
-			response.setHeader("Content-Type", "text/xml");
-			response.end(twilioResponse.toString());
-		
+	twilioResponse.say("Welcome to HAM phone.")
+		.gather({
+			action: "initial-handler",
+			finishOnKey: "*"
+		}, function() {
+			this.say("Press one on your phone to search the Harvard Art Museums collection by object ID.")
+				.say("or, For a random object, press 2.");
 		});
 
+	twilioResponse.say("I'm sorry, I missed that, please try again.");
+	twilioResponse.redirect("/")
+
+	response.setHeader("Content-Type", "text/xml");
+	response.end(twilioResponse.toString());
+});
+
+app.get('/initial-handler', function(request, response) {
+	var digits = request.query.digits;
+	
+	var twilioResponse = new twilio.TwimlResponse();
+
+	if (digits == 1) {
+		twilioResponse.say("Fetching an object.");
+		response.setHeader("Content-Type", "text/xml");
+		response.end(twilioResponse.toString());
+	}
+
+	if (digits == 2)  {
+		twilioResponse.say("Fetching a random object.");
+
+		response.setHeader("Content-Type", "text/xml");
+		response.end(twilioResponse.toString());		
+	}
+
+	twilioResponse.say("I missed that. Please try again.");
+	twilioResponse.redirect("/");
+	response.end(twilioResponse.toString());
 });
 
 var port = process.env.PORT || 5000;
