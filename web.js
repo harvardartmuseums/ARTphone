@@ -17,8 +17,8 @@ app.get('/', function(request, response) {
 				.say("or, For a random object, press 2.");
 		});
 
-	twilioResponse.say("I'm sorry, I missed that, please try again.");
-	twilioResponse.redirect("/")
+	twilioResponse.say("I'm sorry, I missed that, please try again.")
+		.redirect("/");
 
 	response.setHeader("Content-Type", "text/xml");
 	response.end(twilioResponse.toString());
@@ -31,7 +31,6 @@ app.get('/initial-handler', function(request, response) {
 
 	if (digits == 1) {
 		twilioResponse.say("Fetching an object.");
-		response.setHeader("Content-Type", "text/xml");
 		response.end(twilioResponse.toString());
 	}
 
@@ -39,7 +38,6 @@ app.get('/initial-handler', function(request, response) {
 		twilioResponse.say("Fetching a random object. Please hold while we dig through the crates.")
 			.redirect("/random", {method: "GET"});
 
-		response.setHeader("Content-Type", "text/xml");
 		response.end(twilioResponse.toString());		
 	}
 
@@ -54,12 +52,11 @@ app.get('/random', function(request, response) {
 	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1")
 		.on("complete", function(data) {
 			twilioResponse.say("We found something for you.")
-				.say("The title is " + data.records[0].title)
+				.say("The title is " + data.records[0].title + ".")
 				.redirect("/", {method: "GET"});
 
 			response.end(twilioResponse.toString());	
 		});
-
 
 	twilioResponse.say("Something went wrong. Please try again.")
 		.redirect("/");
