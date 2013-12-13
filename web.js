@@ -9,7 +9,8 @@ app.get('/', function(request, response) {
 
 	twilioResponse.say("Welcome to HAM phone.")
 		.gather({
-			action: "/initial-handler",
+			action: "initial-handler",
+			method: "GET",
 			finishOnKey: "*"
 		}, function() {
 			this.say("Press one on your phone to search the Harvard Art Museums collection by object ID.")
