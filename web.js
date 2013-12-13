@@ -51,18 +51,20 @@ app.get('/initial-handler', function(request, response) {
 app.get('/random', function(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1")
+	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*")
 		.on("complete", function(data) {
 			twilioResponse.say("We found something for you.")
 				.say("The title is " + data.records[0].title + ".")
 				.redirect("/", {method: "GET"});
 
+			response.setHeader("Content-Type", "text/xml");
 			response.end(twilioResponse.toString());	
 		})
 		.on("error", function(error) {
 			twilioResponse.say("Something went wrong. Please try again.")
 				.redirect("/");
 			
+			response.setHeader("Content-Type", "text/xml");
 			response.end(twilioResponse.toString());	
 		});
 });
