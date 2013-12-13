@@ -7,6 +7,7 @@ var twilioResponse = new twilio.TwimlResponse();
 
 app.get('/', function(request, response) {
 	twilioResponse.say("Welcome to HAM phone.");
+	response.end();
 
 	//response.setHeader("Content-Type", "text/xml")
 	//response.send(twilioResponse.toString());
