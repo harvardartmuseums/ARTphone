@@ -87,6 +87,8 @@ app.get('/random', function(request, response) {
 			twilioResponse.say("We found something for you.")
 				.say("I am a " + data.records[0].subclassification + ".")
 				.say("My title is " + data.records[0].title + ".")
+				.pause({length: 1})
+				.say("For future reference my ID number is " + data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, " ") + ".")
 				.redirect("/", {method: "GET"});
 
 			response.setHeader("Content-Type", "text/xml");
