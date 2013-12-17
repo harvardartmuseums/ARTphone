@@ -62,10 +62,17 @@ app.get('/object', function(request, response) {
 
 	rest.get("http://api.harvardartmuseums.org/collection/object/" + digits)
 		.on("complete", function(data) {
-			twilioResponse.say("We found something for you.")
-				.say("I am a " + data.subclassification + ".")
-				.say("My title is " + data.title + ".")
-				.redirect("/", {method: "GET"});
+			if (data) {
+				twilioResponse.say("We found something for you.")
+					.say("I am a " + data.subclassification + ".")
+					.say("My title is " + data.title + ".")
+					.redirect("/", {method: "GET"});
+
+			} else {
+				twilioResponse.say("I'm sorry, we couldn't find that object. Please try again.")
+					.redirect("/", {method: "GET"});
+					
+			}
 
 			response.setHeader("Content-Type", "text/xml");
 			response.end(twilioResponse.toString());	
