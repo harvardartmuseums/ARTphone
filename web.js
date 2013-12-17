@@ -84,17 +84,14 @@ app.get('/random', function(request, response) {
 
 	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*")
 		.on("complete", function(data) {
+			var slowObjectID = data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, ", ");
+			
 			twilioResponse.say("We found something for you.")
 				.say("I am a " + data.records[0].subclassification + ".")
 				.say("My title is " + data.records[0].title + ".")
+				.pause({length: 1})
+				.say("For future reference my ID number is, " + slowObjectID + ".")
 				.redirect("/", {method: "GET"});
-
-			// twilioResponse.say("We found something for you.")
-			// 	.say("I am a " + data.records[0].subclassification + ".")
-			// 	.say("My title is " + data.records[0].title + ".")
-			// 	.pause({length: 1})
-			// 	.say("For future reference my ID number is, " + data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, ", ") + ".")
-			// 	.redirect("/", {method: "GET"});
 
 			response.setHeader("Content-Type", "text/xml");
 			response.end(twilioResponse.toString());	
