@@ -123,8 +123,10 @@ app.get('/sms', function(request, response) {
 		.on("complete", function(data) {
 			if (data) {
 				twilioResponse.message(function() {
-					this.body("I am a " + data.subclassification + "." + "My title is " + data.title + ".")
-						.media(data.primaryimageurl + "?width=200&height=200");
+					this.body("I am a " + data.subclassification + ".")
+						.body("My title is " + data.title + ".")
+						.body("Find out more at " + data.url);
+						// .media(data.primaryimageurl + "?width=200&height=200");
 					});
 
 			} else {
