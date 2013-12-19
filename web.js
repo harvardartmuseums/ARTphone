@@ -131,11 +131,20 @@ app.get('/sms', function(request, response) {
 			if (data) {
 				data = data.records ? data.records[0] : data;
 
+				var d = new Date();
+				var daysSinceLastAccess = (d - new Date(data.dateoflastpageview))/(1000 * 60 * 60 * 24);
+				var linkMessage = "";
+
+				if (daysSinceLastAccess > 45) {
+					linkMessage = "I haven't been viewed in quite some time. Come visit at " + data.url + ".";
+				} else {
+					linkMessage = "Get my whole story at " + data.url + ".";
+				}
+
 				twilioResponse.message(function() {
 					this.body("I am a " + data.subclassification + ".")
 						.body("My title is " + data.title + ".")
-						.body("Get my whole story at " + data.url);
-						// .media(data.primaryimageurl + "?width=200&height=200");
+						.body(linkMessage);
 					});
 
 			} else {
