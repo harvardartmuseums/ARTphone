@@ -125,7 +125,7 @@ app.get('/sms', function(request, response) {
 				twilioResponse.message(function() {
 					this.body("I am a " + data.subclassification + ".")
 						.body("My title is " + data.title + ".")
-						.body("Find out more at " + data.url);
+						.body("Get my whole story at " + data.url);
 						// .media(data.primaryimageurl + "?width=200&height=200");
 					});
 
