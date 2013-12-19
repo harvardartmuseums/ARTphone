@@ -116,17 +116,26 @@ app.get('/random', function(request, response) {
 
 app.get('/sms', function(request, response) {
 	var digits = request.query.Body;
+	var apiQuery;
 
 	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object/" + digits)
+	if (digits.toLowerCase() === "random") {
+		apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*";
+	} else {
+		apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits;
+	}
+
+	rest.get(apiQuery)
 		.on("complete", function(data) {
 			if (data) {
+				data = data.records ? data.records[0] : data;
+
 				twilioResponse.message(function() {
 					this.body("I am a " + data.subclassification + ".")
 						.body("My title is " + data.title + ".")
-						.media(data.primaryimageurl + "?width=200&height=200")
 						.body("Get my whole story at " + data.url);
+						// .media(data.primaryimageurl + "?width=200&height=200");
 					});
 
 			} else {
