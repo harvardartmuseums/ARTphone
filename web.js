@@ -1,3 +1,5 @@
+//See https://github.com/cooperhewitt/objectphone
+
 var express = require("express"),
 	twilio = require("twilio"),
 	rest = require("restler");
@@ -71,7 +73,7 @@ app.get('/object', function(request, response) {
 			} else {
 				twilioResponse.say("I'm sorry, we couldn't find that object. Please try again.")
 					.redirect("/", {method: "GET"});
-					
+
 			}
 
 			response.setHeader("Content-Type", "text/xml");
@@ -106,6 +108,34 @@ app.get('/random', function(request, response) {
 		.on("error", function(error) {
 			twilioResponse.say("Something went wrong. Please try again.")
 				.redirect("/");
+			
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		});
+});
+
+app.get('/sms', function(request, response) {
+	var digits = request.query.Body;
+
+	var twilioResponse = new twilio.TwimlResponse();
+
+	rest.get("http://api.harvardartmuseums.org/collection/object/" + digits)
+		.on("complete", function(data) {
+			if (data) {
+				twilioResponse.message(function() {
+					this.body("I am a " + data.subclassification + "." + "My title is " + data.title + ".")
+						.media(data.primaryimageurl + "?width=200&height=200");
+					});
+
+			} else {
+				//do nothing
+			}
+
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		})
+		.on("error", function(error) {
+			twilioResponse.sms("Something went wrong. Please try again.");
 			
 			response.setHeader("Content-Type", "text/xml");
 			response.end(twilioResponse.toString());	
