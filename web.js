@@ -66,12 +66,12 @@ app.get('/object-action-handler', function(request, response) {
 	rest.get(apiQuery)
 		.on("complete", function(data) {
 			if (data) {
-				twilioResponse.message(function() {
-					this.body("I am a " + data.subclassification + ".")
-						.body("My title is " + data.title + ".")
-						.body("My ID number is " + objectid + ".")
-						.body("Visit me at " + data.url + ".");
-					})
+				var bodyText = 	"I am a " + data.subclassification + ". ";
+				bodyText += "My title is " + data.title + ". ";
+				bodyText += "My ID number is " + objectid + ". ";
+				bodyText += "Visit me at " + data.url + ".";
+
+				twilioResponse.sms(bodyText)
 				.redirect("/", {method: "GET"});
 
 			} else {
