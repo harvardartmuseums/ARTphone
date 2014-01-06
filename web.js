@@ -57,6 +57,37 @@ app.get('/initial-handler', function(request, response) {
 	response.end(twilioResponse.toString());
 });
 
+app.get('/object-action-handler', function(request, response) {
+	var objectid = request.query.objectid;
+	var apiQuery = "http://api.harvardartmuseums.org/collection/object/" + objectid;
+
+	var twilioResponse = new twilio.TwimlResponse();
+
+	rest.get(apiQuery)
+		.on("complete", function(data) {
+			if (data) {
+				twilioResponse.message(function() {
+					this.body("I am a " + data.subclassification + ".")
+						.body("My title is " + data.title + ".")
+						.body("My ID number is " + objectid + ".")
+						.body("Visit me at " + data.url + ".");
+					});
+
+			} else {
+				//do nothing
+			}
+
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		})
+		.on("error", function(error) {
+			// twilioResponse.sms("Something went wrong. Please try again.");
+			
+			// response.setHeader("Content-Type", "text/xml");
+			// response.end(twilioResponse.toString());	
+		});				
+});
+
 app.get('/object', function(request, response) {
 	var digits = request.query.Digits;
 	
@@ -95,11 +126,26 @@ app.get('/random', function(request, response) {
 		.on("complete", function(data) {
 			var slowObjectID = data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, ", ");
 			
+			// twilioResponse.say("We found something for you.")
+			// 	.say("I am a " + data.records[0].subclassification + ".")
+			// 	.say("My title is " + data.records[0].title + ".")
+			// 	.pause({length: 1})
+			// 	.say("For future reference my ID number is, " + slowObjectID + ".")
+			// 	.redirect("/", {method: "GET"});
+
 			twilioResponse.say("We found something for you.")
 				.say("I am a " + data.records[0].subclassification + ".")
 				.say("My title is " + data.records[0].title + ".")
 				.pause({length: 1})
 				.say("For future reference my ID number is, " + slowObjectID + ".")
+				.gather({
+					action: "object-action-handler?objectid=" + data.records[0].objectid,
+					method: "GET",
+					numDigits: 1
+				}, function() {
+					this.say("Press one on your phone to receive a text message containing this information.")
+						.say("or, stay on the line to start over.");
+				})
 				.redirect("/", {method: "GET"});
 
 			response.setHeader("Content-Type", "text/xml");
