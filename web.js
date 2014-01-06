@@ -69,7 +69,7 @@ app.get('/object-action-handler', function(request, response) {
 				var bodyText = 	"I am " +  data.title + ". ";
 				bodyText += "Visit me at " + data.url + ".";
 
-				twilioResponse.message(bodyText)
+				twilioResponse.sms(bodyText)
 				.redirect("/", {method: "GET"});
 
 			} else {
