@@ -20,7 +20,7 @@ app.get('/', function(request, response) {
 		});
 
 	twilioResponse.say("I'm sorry, I missed that, please try again.");
-	twilioResponse.redirect("/");
+	twilioResponse.redirect("/", {method: "GET"});
 
 	response.setHeader("Content-Type", "text/xml");
 	response.end(twilioResponse.toString());
