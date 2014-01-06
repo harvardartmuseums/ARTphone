@@ -71,7 +71,8 @@ app.get('/object-action-handler', function(request, response) {
 						.body("My title is " + data.title + ".")
 						.body("My ID number is " + objectid + ".")
 						.body("Visit me at " + data.url + ".");
-					});
+					})
+				.redirect("/", {method: "GET"});
 
 			} else {
 				//do nothing
