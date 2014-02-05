@@ -6,6 +6,8 @@ var express = require("express"),
 
 var app = express();
 
+var apikey = process.env.APIKEY;
+
 app.get('/', function(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
@@ -59,7 +61,7 @@ app.get('/initial-handler', function(request, response) {
 
 app.get('/object-action-handler', function(request, response) {
 	var objectid = request.query.objectid;
-	var apiQuery = "http://api.harvardartmuseums.org/collection/object/" + objectid;
+	var apiQuery = "http://api.harvardartmuseums.org/collection/object/" + objectid + "?apikey=" + apikey;
 
 	var twilioResponse = new twilio.TwimlResponse();
 
@@ -92,7 +94,7 @@ app.get('/object', function(request, response) {
 	
 	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object/" + digits)
+	rest.get("http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey)
 		.on("complete", function(data) {
 			if (data) {
 				twilioResponse.say("We found something for you.")
@@ -121,7 +123,7 @@ app.get('/object', function(request, response) {
 app.get('/random', function(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*")
+	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey)
 		.on("complete", function(data) {
 			var slowObjectID = data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, ", ");
 			
@@ -166,9 +168,9 @@ app.get('/sms', function(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
 	if (digits.toLowerCase() === "random") {
-		apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*";
+		apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey;
 	} else {
-		apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits;
+		apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey;
 	}
 
 	rest.get(apiQuery)
