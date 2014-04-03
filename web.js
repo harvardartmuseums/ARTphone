@@ -162,7 +162,7 @@ app.get('/random', function(request, response) {
 });
 
 app.get('/sms', function(request, response) {
-	var digits = request.query.Body;
+	var digits = request.query.Body || "";
 	var apiQuery;
 
 	var twilioResponse = new twilio.TwimlResponse();
