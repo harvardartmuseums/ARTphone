@@ -167,10 +167,12 @@ app.get('/sms', function(request, response) {
 
 	var twilioResponse = new twilio.TwimlResponse();
 
-	if (digits.toLowerCase() === "random") {
-		apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey;
-	} else {
-		apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey;
+	switch (digits.toLowerCase()) {
+		case "random":
+			apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey;
+			break;
+		default:
+			apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey;	
 	}
 
 	rest.get(apiQuery)
