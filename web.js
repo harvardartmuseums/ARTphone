@@ -19,7 +19,7 @@ app.get('/', function(request, response) {
 		}, function() {
 			this.say("Press one on your phone to search the Harvard Art Museums collection by object ID.")
 				.say("Press two for a random object.")
-				.say("Press three to learn more about HAM phone.");
+				.say("Or, press three to learn more about HAM phone.");
 		});
 
 	twilioResponse.say("I'm sorry, I missed that, please try again.");
@@ -56,9 +56,10 @@ app.get('/initial-handler', function(request, response) {
 	}
 
 	if (digits == 3) {
-		twilioResponse.say("HAM Phone is a R and D project of the Harvard Art Museums.")
+		twilioResponse.say("HAM Phone is a research and development project of the Harvard Art Museums.")
 			.say("It is an experiment in data accessibility and malleability.")
 			.say("It is based on the Cooper Hewitt Museum's object phone project.")
+			.pause({length: 1})
 			.redirect("/", {method: "GET"});
 
 		response.setHeader("Content-Type", "text/xml");
