@@ -18,7 +18,8 @@ app.get('/', function(request, response) {
 			numDigits: 1
 		}, function() {
 			this.say("Press one on your phone to search the Harvard Art Museums collection by object ID.")
-				.say("or, For a random object, press 2.");
+				.say("Press two for a random object.")
+				.say("Press three to learn more about HAM phone.");
 		});
 
 	twilioResponse.say("I'm sorry, I missed that, please try again.");
@@ -52,6 +53,16 @@ app.get('/initial-handler', function(request, response) {
 
 		response.setHeader("Content-Type", "text/xml");
 		response.end(twilioResponse.toString());		
+	}
+
+	if (digits == 3) {
+		twilioResponse.say("HAM Phone is a R and D project of the Harvard Art Museums.")
+			.say("It is an experiment in data accessibility and malleability.")
+			.say("It is based on the Cooper Hewitt Museum's object phone project.")
+			.redirect("/", {method: "GET"});
+
+		response.setHeader("Content-Type", "text/xml");
+		response.end(twilioResponse.toString());	
 	}
 
 	twilioResponse.say("I missed that. Please try again.")
@@ -154,19 +165,43 @@ app.get('/random', function(request, response) {
 		});
 });
 
-app.get('/sms', function(request, response) {
+app.get('/sms', function(request, response) {	
 	var digits = request.query.Body || "";
-	var apiQuery;
-
-	var twilioResponse = new twilio.TwimlResponse();
 
 	switch (digits.toLowerCase()) {
 		case "random":
-			apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey;
+			sendSMSRandomObject(request, response);
 			break;
-		default:
-			apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey;	
+		case "about":
+			sendSMSAbout(request, response);
+			break;
+		default:	
+			sendSMSSpecificObject(request, response);
 	}
+});
+
+var port = process.env.PORT || 5000;
+app.listen(port, function() {
+	console.log("Listening on " + port);
+});
+
+function sendSMSAbout(request, response) {
+	var twilioResponse = new twilio.TwimlResponse();
+
+	twilioResponse.message(function() {
+		this.body("HAM Phone is a R&D project of the Harvard Art Museums.")
+			.body("It is an experiment in data accessibility and malleability.")
+			.body("It is based on the Cooper-Hewitt Museum's object phone project.");
+		});
+
+	response.setHeader("Content-Type", "text/xml");
+	response.end(twilioResponse.toString());	
+}
+
+
+function sendSMSRandomObject(request, response) {
+	var apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey;
+	var twilioResponse = new twilio.TwimlResponse();
 
 	rest.get(apiQuery)
 		.on("complete", function(data) {
@@ -202,9 +237,45 @@ app.get('/sms', function(request, response) {
 			response.setHeader("Content-Type", "text/xml");
 			response.end(twilioResponse.toString());	
 		});
-});
+}
 
-var port = process.env.PORT || 5000;
-app.listen(port, function() {
-	console.log("Listening on " + port);
-});
+function sendSMSSpecificObject(request, response) {
+	var digits = request.query.Body;
+	var apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey;
+	var twilioResponse = new twilio.TwimlResponse();
+
+	rest.get(apiQuery)
+		.on("complete", function(data) {
+			if (data) {
+				data = data.records ? data.records[0] : data;
+
+				var d = new Date();
+				var daysSinceLastAccess = (d - new Date(data.dateoflastpageview))/(1000 * 60 * 60 * 24);
+				var linkMessage = "";
+
+				if (daysSinceLastAccess > 45) {
+					linkMessage = "I haven't been viewed in quite some time. Come visit at " + data.url + ".";
+				} else {
+					linkMessage = "Get my whole story at " + data.url + ".";
+				}
+
+				twilioResponse.message(function() {
+					this.body("I am a " + data.subclassification + ".")
+						.body("My title is " + data.title + ".")
+						.body(linkMessage);
+					});
+
+			} else {
+				//do nothing
+			}
+
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		})
+		.on("error", function(error) {
+			twilioResponse.sms("Something went wrong. Please try again.");
+			
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		});
+}
