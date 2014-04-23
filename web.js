@@ -73,7 +73,7 @@ app.get('/initial-handler', function(request, response) {
 
 app.get('/object-action-handler', function(request, response) {
 	var objectid = request.query.objectid;
-	var apiQuery = "http://api.harvardartmuseums.org/collection/object/" + objectid + "?apikey=" + apikey;
+	var apiQuery = "http://api.harvardartmuseums.org/object/" + objectid + "?apikey=" + apikey;
 
 	var twilioResponse = new twilio.TwimlResponse();
 
@@ -106,7 +106,7 @@ app.get('/object', function(request, response) {
 	
 	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey)
+	rest.get("http://api.harvardartmuseums.org/object/" + digits + "?apikey=" + apikey)
 		.on("complete", function(data) {
 			if (data) {
 				twilioResponse.say("We found something for you.")
@@ -135,7 +135,7 @@ app.get('/object', function(request, response) {
 app.get('/random', function(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
-	rest.get("http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey)
+	rest.get("http://api.harvardartmuseums.org/object?s=random&size=1&q=title:*&apikey=" + apikey)
 		.on("complete", function(data) {
 			var slowObjectID = data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, ", ");
 
@@ -204,7 +204,7 @@ function sendSMSAbout(request, response) {
 
 
 function sendSMSRandomObject(request, response) {
-	var apiQuery = "http://api.harvardartmuseums.org/collection/object?s=random&size=1&q=title:*&apikey=" + apikey;
+	var apiQuery = "http://api.harvardartmuseums.org/object?s=random&size=1&q=title:*&apikey=" + apikey;
 	var twilioResponse = new twilio.TwimlResponse();
 
 	rest.get(apiQuery)
@@ -282,7 +282,7 @@ function sendSMSRandomPerson(request, response) {
 
 function sendSMSSpecificObject(request, response) {
 	var digits = request.query.Body;
-	var apiQuery = "http://api.harvardartmuseums.org/collection/object/" + digits + "?apikey=" + apikey;
+	var apiQuery = "http://api.harvardartmuseums.org/object/" + digits + "?apikey=" + apikey;
 	var twilioResponse = new twilio.TwimlResponse();
 
 	rest.get(apiQuery)
