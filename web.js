@@ -173,6 +173,9 @@ app.get('/sms', function(request, response) {
 		case "random":
 			sendSMSRandomObject(request, response);
 			break;
+		case "random person":
+			sendSMSRandomPerson(request, response);
+			break;
 		case "about":
 			sendSMSAbout(request, response);
 			break;
@@ -222,6 +225,43 @@ function sendSMSRandomObject(request, response) {
 				twilioResponse.message(function() {
 					this.body("I am a " + data.subclassification + ".")
 						.body("My title is " + data.title + ".")
+						.body(linkMessage);
+					});
+
+			} else {
+				//do nothing
+			}
+
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		})
+		.on("error", function(error) {
+			twilioResponse.sms("Something went wrong. Please try again.");
+			
+			response.setHeader("Content-Type", "text/xml");
+			response.end(twilioResponse.toString());	
+		});
+}
+
+function sendSMSRandomPerson(request, response) {
+	var apiQuery = "http://api.harvardartmuseums.org/person?s=random&size=1&q=displayname:*&apikey=" + apikey;
+	var twilioResponse = new twilio.TwimlResponse();
+
+	rest.get(apiQuery)
+		.on("complete", function(data) {
+			if (data) {
+				data = data.records ? data.records[0] : data;
+				var linkMessage = "";
+				var searchURL = "http://www.harvardartmuseums.org/art/search?field_artist_search=" + encodeURIComponent(data.displayname);
+
+				if (data.objectcount === 1) {
+					linkMessage = "I'm associated with 1 work of art in the collection. Check it out at " + searchURL + ".";
+				} else if (data.objectcount > 1) {
+					linkMessage = "I'm associated with " + data.objectcount + " works of art in the collection. Check them out at " + searchURL + ".";
+				}				
+
+				twilioResponse.message(function() {
+					this.body("Hi. I am " + data.displayname + ".")
 						.body(linkMessage);
 					});
 
