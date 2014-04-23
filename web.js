@@ -11,7 +11,7 @@ var apikey = process.env.APIKEY;
 app.get('/', function(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
-	twilioResponse.say("Welcome to HAM phone.")
+	twilioResponse.say("Welcome to art phone.")
 		.gather({
 			action: "initial-handler",
 			method: "GET",
@@ -19,7 +19,7 @@ app.get('/', function(request, response) {
 		}, function() {
 			this.say("Press one on your phone to search the Harvard Art Museums collection by object ID.")
 				.say("Press two for a random object.")
-				.say("Or, press three to learn more about HAM phone.");
+				.say("Or, press three to learn more about art phone.");
 		});
 
 	twilioResponse.say("I'm sorry, I missed that, please try again.");
@@ -56,7 +56,7 @@ app.get('/initial-handler', function(request, response) {
 	}
 
 	if (digits == 3) {
-		twilioResponse.say("HAM Phone is a research and development project of the Harvard Art Museums.")
+		twilioResponse.say("Art phone is a research and development project of the Harvard Art Museums.")
 			.say("It is an experiment in data accessibility and malleability.")
 			.say("It is based on the Cooper Hewitt Museum's object phone project.")
 			.pause({length: 1})
@@ -190,7 +190,7 @@ function sendSMSAbout(request, response) {
 	var twilioResponse = new twilio.TwimlResponse();
 
 	twilioResponse.message(function() {
-		this.body("HAM Phone is a R&D project of the Harvard Art Museums.")
+		this.body("ARTphone is a R&D project of the Harvard Art Museums.")
 			.body("It is an experiment in data accessibility and malleability.")
 			.body("It is based on the Cooper-Hewitt Museum's object phone project.");
 		});
