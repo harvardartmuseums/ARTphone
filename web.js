@@ -80,20 +80,9 @@ app.get('/object-action-handler', function(request, response) {
 	rest.get(apiQuery)
 		.on("complete", function(data) {
 			if (data) {
-				var imageURL = "";
-
-				if (data.primaryimageurl) {
-					if (data.imagepermissionlevel == 0) {
-						imageURL = "http://ids.lib.harvard.edu/ids/view/" + data.images[0].idsid + "?width=500&height=500";
-					}
-				}
-
-				twilioResponse.message(function() {
-					this.body("I am a " + data.worktypes[0].worktype + ".")
-						.body("My title is " + data.title + ".")
-						.body("Visit me at " + data.url + ".")
-						.media(imageURL);
-					})
+				twilioResponse.sms("I am a " + data.worktypes[0].worktype + ". " +
+									"My title is " + data.title + ". " +
+									"Visit me at " + data.url + ".")
 				.redirect("/", {method: "GET"});
 
 			} else {
