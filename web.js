@@ -118,7 +118,7 @@ app.get('/object', function(request, response) {
 
 	rest.get("http://api.harvardartmuseums.org/object/" + digits + "?apikey=" + apikey)
 		.on("complete", function(data) {
-			if (data) {
+			if (data.objectid) {
 				twilioResponse.say("We found something for you.")
 					.say("I am a " + data.worktypes[0].worktype + ".")
 					.say("My title is " + data.title + ".")
