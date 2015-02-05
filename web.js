@@ -225,10 +225,10 @@ function sendSMSRandomObject(request, response) {
 
 				if (data.primaryimageurl) {
 					if (data.imagepermissionlevel == 0) {
-						imageURL = data.primaryimageurl + "?width=500&height=500";
+						imageURL = "http://ids.lib.harvard.edu/ids/view/" + data.images[0].idsid + "?width=500&height=500";
 					}
 				}
-				imageURL = "http://ids.lib.harvard.edu/ids/view/18786116?width=500&height=500";
+
 				twilioResponse.message(function() {
 					this.body("I am a " + data.worktypes[0].worktype + ".")
 						.body("My title is " + data.title + ".")
