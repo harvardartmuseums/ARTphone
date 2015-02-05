@@ -110,7 +110,7 @@ app.get('/object', function(request, response) {
 		.on("complete", function(data) {
 			if (data) {
 				twilioResponse.say("We found something for you.")
-					.say("I am a " + data.subclassification + ".")
+					.say("I am a " + data.worktypes[0].worktype + ".")
 					.say("My title is " + data.title + ".")
 					.redirect("/", {method: "GET"});
 
@@ -140,7 +140,7 @@ app.get('/random', function(request, response) {
 			var slowObjectID = data.records[0].objectid.toString().replace(/\B(?=(\d{1})+(?!\d))/g, ", ");
 
 			twilioResponse.say("We found something for you.")
-				.say("I am a " + data.records[0].subclassification + ".")
+				.say("I am a " + data.records[0].worktypes[0].worktype + ".")
 				.say("My title is " + data.records[0].title + ".")
 				.pause({length: 1})
 				.say("For future reference my ID number is, " + slowObjectID + ".")
@@ -309,7 +309,7 @@ function sendSMSSpecificObject(request, response) {
 				}
 
 				twilioResponse.message(function() {
-					this.body("I am a " + data.subclassification + ".")
+					this.body("I am a " + data.worktypes[0].worktype + ".")
 						.body("My title is " + data.title + ".")
 						.body(linkMessage);
 					});
