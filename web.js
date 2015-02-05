@@ -295,7 +295,7 @@ function sendSMSSpecificObject(request, response) {
 
 	rest.get(apiQuery)
 		.on("complete", function(data) {
-			if (data) {
+			if (data.objectid) {
 				data = data.records ? data.records[0] : data;
 
 				var d = new Date();
@@ -315,7 +315,7 @@ function sendSMSSpecificObject(request, response) {
 					});
 
 			} else {
-				//do nothing
+				twilioResponse.message(digits + " doesn't mean anything to me. Please try again.");
 			}
 
 			response.setHeader("Content-Type", "text/xml");
