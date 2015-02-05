@@ -301,6 +301,7 @@ function sendSMSSpecificObject(request, response) {
 				var d = new Date();
 				var daysSinceLastAccess = (d - new Date(data.dateoflastpageview))/(1000 * 60 * 60 * 24);
 				var linkMessage = "";
+				var imageURL = "";
 
 				if (daysSinceLastAccess > 45) {
 					linkMessage = "I haven't been viewed in quite some time. Come visit at " + data.url + ".";
@@ -308,10 +309,17 @@ function sendSMSSpecificObject(request, response) {
 					linkMessage = "Get my whole story at " + data.url + ".";
 				}
 
+				if (data.primaryimageurl) {
+					if (data.imagepermissionlevel == 0) {
+						imageURL = "http://ids.lib.harvard.edu/ids/view/" + data.images[0].idsid + "?width=500&height=500";
+					}
+				}				
+
 				twilioResponse.message(function() {
 					this.body("I am a " + data.worktypes[0].worktype + ".")
 						.body("My title is " + data.title + ".")
-						.body(linkMessage);
+						.body(linkMessage)
+						.media(imageURL);
 					});
 
 			} else {
