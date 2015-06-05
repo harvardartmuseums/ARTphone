@@ -168,7 +168,7 @@ app.get('/random', function(request, response) {
 app.get('/sms', function(request, response) {	
 	var digits = request.query.Body || "";
 
-	switch (digits.toLowerCase()) {
+	switch (digits.trim().toLowerCase()) {
 		case "random":
 			sendSMSRandomObject(request, response);
 			break;
@@ -289,7 +289,7 @@ function sendSMSRandomPerson(request, response) {
 
 function sendSMSSpecificObject(request, response) {
 	var digits = request.query.Body;
-	var apiQuery = "http://api.harvardartmuseums.org/object/" + digits + "?apikey=" + apikey;
+	var apiQuery = "http://api.harvardartmuseums.org/object/" + digits.trim() + "?apikey=" + apikey;
 	var twilioResponse = new twilio.TwimlResponse();
 
 	rest.get(apiQuery)
