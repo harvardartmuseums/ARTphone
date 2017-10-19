@@ -259,12 +259,11 @@ function sendSMSRandomPerson(request, response) {
 			if (data) {
 				data = data.records ? data.records[0] : data;
 				var linkMessage = "";
-				var searchURL = "http://www.harvardartmuseums.org/search-results?q=" + encodeURIComponent(data.displayname);
 
 				if (data.objectcount === 1) {
-					linkMessage = "I'm associated with 1 work of art in the collection. Check it out at " + searchURL + ".";
+					linkMessage = "I'm associated with 1 work of art in the collection. Check it out at " + data.url + ".";
 				} else if (data.objectcount > 1) {
-					linkMessage = "I'm associated with " + data.objectcount + " works of art in the collection. Check them out at " + searchURL + ".";
+					linkMessage = "I'm associated with " + data.objectcount + " works of art in the collection. Check them out at " + data.url + ".";
 				}				
 
 				twilioResponse.message(function() {
