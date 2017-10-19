@@ -309,7 +309,7 @@ function sendSMSSpecificObject(request, response) {
 
 				if (data.primaryimageurl) {
 					if (data.imagepermissionlevel == 0) {
-						imageURL = "http://ids.lib.harvard.edu/ids/view/" + data.images[0].idsid + "?width=500&height=500";
+						imageURL = "https://ids.lib.harvard.edu/ids/view/" + data.images[0].idsid + "?width=500&height=500";
 					}
 				}				
 
